@@ -28,5 +28,11 @@
     "format": "prettier --write '**/*.ts'",
     "check": "yarn test && yarn lint",
     "prepare": "yarn build"
+  },
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "types": "./lib/typings/index.d.ts"
+    }
   }
 }
