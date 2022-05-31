@@ -27,8 +27,7 @@
     "build": "tsc",
     "lint": "eslint . --fix",
     "format": "prettier --write '**/*.ts'",
-    "check": "yarn test && yarn lint",
-    "prepare": "yarn build"
+    "check": "yarn test && yarn lint"
   },
   "exports": {
     ".": {
