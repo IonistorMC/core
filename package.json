@@ -1,0 +1,31 @@
+{
+  "name": "@ionistor/core",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "repository": "https://github.com/IonistorMC/core.git",
+  "author": "LIMPIX31",
+  "license": "MIT",
+  "files": [
+    "lib/**/*"
+  ],
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
+    "eslint": "^8.16.0",
+    "jest": "^28.1.0",
+    "prettier": "^2.6.2",
+    "typescript": "^4.7.2",
+    "yarn": "^1.22.18"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.13"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "lint": "eslint . --fix",
+    "format": "prettier --write '**/*.ts'",
+    "check": "yarn test && yarn lint",
+    "prepare": "yarn build"
+  }
+}

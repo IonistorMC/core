@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "incremental": true,                                                        
+    "tsBuildInfoFile": "./",                          
+    "target": "ESNext",               
+    "experimentalDecorators": true,                   
+    "emitDecoratorMetadata": true,                    
+    "module": "commonjs",                                                        
+    "moduleResolution": "node",                       
+    "declaration": true,                              
+    "outDir": "./lib",                                                
+    "declarationDir": "./lib/typings",                
+    "isolatedModules": true,                               
+    "esModuleInterop": true,                                     
+    "forceConsistentCasingInFileNames": true,         
+    "strict": true,                                            
+    "skipLibCheck": true                              
+  }
+}
