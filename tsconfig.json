@@ -4,7 +4,7 @@
     "target": "ESNext",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "module": "commonjs",
+    "module": "ESNext",
     "moduleResolution": "node",
     "declaration": true,
     "outDir": "./lib",
