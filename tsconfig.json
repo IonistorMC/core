@@ -9,7 +9,6 @@
     "declaration": true,
     "outDir": "./lib",
     "declarationDir": "./lib/typings",
-    "isolatedModules": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
