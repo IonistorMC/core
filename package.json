@@ -25,11 +25,10 @@
     "reflect-metadata": "^0.1.13"
   },
   "scripts": {
-    "test": "jest",
     "build": "tsc",
     "lint": "eslint . --fix",
     "format": "prettier --write '**/*.ts'",
-    "check": "yarn test && yarn lint"
+    "check": "yarn lint"
   },
   "exports": {
     ".": {
