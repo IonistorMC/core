@@ -131,3 +131,5 @@ dist
 
 # Jetbrains IDEs
 .idea
+# npm lib files
+lib
