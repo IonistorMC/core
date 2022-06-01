@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "incremental": true,
-    "tsBuildInfoFile": "./",
     "target": "ESNext",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
@@ -18,7 +17,10 @@
     "types": [
       "node",
       "jest",
-      "reflect-metadata",
-    ],
-  }
+      "reflect-metadata"
+    ]
+  },
+  "include": [
+    "src/**/*"
+  ]
 }
