@@ -29,7 +29,7 @@ export class TypedBuffer {
   private readIndex = 0
   private writeSessions: Record<string, number> = {}
 
-  constructor(readonly alloc: number = +(process.env.PACKET_ALLOC ?? 8 * 1024 * 1024)) {
+  constructor(readonly alloc: number = +(process.env.PACKET_ALLOC ?? 2097151)) {
     this.#buffer = Buffer.alloc(alloc)
   }
 
