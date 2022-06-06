@@ -133,3 +133,5 @@ dist
 .idea
 # npm lib files
 lib
+# ignore dir
+ignore
