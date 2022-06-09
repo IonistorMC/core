@@ -16,8 +16,8 @@ import {
   UUID,
   Position, NBT,
 } from '../datatypes.js'
-import { XYZPosition } from './datatypes/Position'
-import { NBTModel } from '../nbt/model'
+import { XYZPosition } from './datatypes/Position.js'
+import { NBTModel } from '../nbt/model.js'
 
 /**
  * <h1> TypedBuffer </h1>
