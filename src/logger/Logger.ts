@@ -84,13 +84,14 @@ export class Logger {
     inject(ProtocolPacket.prototype, 'data', ({ object, target }, ...args) => {
       const start = performance.now()
       const result = target(...args)
-      logger.debug(`Packet ${object.constructor.name} encoded in ${performance.now() - start}ms`)
+      logger.debug(`Packet ${chalk.bold.underline(object.constructor.name)} encoded in ${performance.now() - start}ms`)
       return result
     })
-    inject(Framer.prototype, 'push', ({ target, noreturn }, ...args) => {
+    inject(Framer.prototype, 'push', ({ target, noreturn, stacktrace }, ...args) => {
+      if(stacktrace[0].getFunctionName() === 'Framer.push') return
       const start = performance.now()
       target(...args)
-      logger.debug(`Chunk framed in ${performance.now() - start}ms`)
+      logger.debug(`Packet chunk framed in ${performance.now() - start}ms`)
       noreturn()
     })
   }
