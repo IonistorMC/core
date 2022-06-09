@@ -56,6 +56,18 @@ export class TypedBuffer {
   }
 
   /**
+   * Pushes a value(s) to the end of the buffer.
+   * @param data - value(s) to push
+   */
+  push(...data: Buffer[]): this {
+    for (const d of data) {
+      d.copy(this.#buffer, this.bufferLength)
+      this.bufferLength += d.length
+    }
+    return this
+  }
+
+  /**
    * Writes a value of the specified type to buffer.
    * @param Transformer
    * @param value
@@ -92,10 +104,16 @@ export class TypedBuffer {
     return result
   }
 
+  /**
+   * Resets read index.
+   */
   resetRead(): void {
     this.readIndex = 0
   }
 
+  /**
+   * Clears the buffer.
+   */
   clear(): void {
     this.bufferLength = 0
     this.readIndex = 0

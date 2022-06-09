@@ -4,11 +4,12 @@ import figures from 'figures'
 import inject from 'flinject'
 import { StackFrame } from 'stack-trace'
 import { ProtocolPacket } from '../protocol/Packet.js'
+import { Framer } from '../protocol/Framer.js'
 
 export class Logger {
   constructor(public level = LogLevel.Info) {
-    if(this.level <= LogLevel.Trace) this.setupTrace(this)
-    if(this.level <= LogLevel.Debug) this.setupDebug(this)
+    if (this.level <= LogLevel.Trace) this.setupTrace(this)
+    if (this.level <= LogLevel.Debug) this.setupDebug(this)
   }
 
   log(level: LogLevel, message: string) {
@@ -37,7 +38,7 @@ export class Logger {
     const at = trace[0]
     const filename = at.getFileName().replace('file://', '').replace(process.cwd(), '').substring(1)
     const position = `${at.getLineNumber()}:${at.getColumnNumber()}`
-    this.log(LogLevel.Trace, chalk.blueBright(`${chalk.bold('At')} ${filename} ${position} > ${message}`))
+    this.log(LogLevel.Trace, `${message} ${chalk.gray(`${chalk.bold('at')} ${filename} ${position}`)}`)
   }
 
   private static coloredLevel(level: LogLevel): string {
@@ -80,11 +81,17 @@ export class Logger {
   }
 
   private setupDebug(logger: Logger) {
-    inject(ProtocolPacket.prototype, 'data', ({object, target}, ...args) => {
+    inject(ProtocolPacket.prototype, 'data', ({ object, target }, ...args) => {
       const start = performance.now()
       const result = target(...args)
       logger.debug(`Packet ${object.constructor.name} encoded in ${performance.now() - start}ms`)
       return result
+    })
+    inject(Framer.prototype, 'push', ({ target, noreturn }, ...args) => {
+      const start = performance.now()
+      target(...args)
+      logger.debug(`Chunk framed in ${performance.now() - start}ms`)
+      noreturn()
     })
   }
 }
