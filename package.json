@@ -23,10 +23,12 @@
     "yarn": "^1.22.18"
   },
   "dependencies": {
+    "@types/varint": "^6.0.0",
     "chalk": "^5.0.1",
     "figures": "^4.0.1",
     "flinject": "^1.1.0",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "varint": "^6.0.0"
   },
   "scripts": {
     "build": "tsc",
