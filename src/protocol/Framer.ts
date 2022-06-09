@@ -1,5 +1,5 @@
 import varint from 'varint'
-import { logger } from '../logger/Logger.js'
+import { Logger } from '../logger/Logger.js'
 
 export interface FrameData {
   data: Buffer,
@@ -9,6 +9,8 @@ export interface FrameData {
 export class Framer {
   private frames: FrameData[] = []
   private currentFrameIndex = 0
+
+  constructor(private readonly logger: Logger) {}
 
   push(data: Buffer): void {
     try {
@@ -34,7 +36,7 @@ export class Framer {
         }
       }
     } catch (e: any) {
-      logger.debug(`Failed to frame chunk: ${e.message}`)
+      this.logger.debug(`Failed to frame chunk: ${e.message}`)
     }
   }
 
@@ -42,5 +44,9 @@ export class Framer {
     const frames = this.frames.filter(v => v.length === v.data.length).map(frame => frame.data)
     this.currentFrameIndex = 0
     return frames as Buffer[]
+  }
+
+  hasFrames(): boolean {
+    return this.frames.length > 0
   }
 }
