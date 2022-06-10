@@ -14,10 +14,11 @@ import {
   Varint,
   Boolean,
   UUID,
-  Position, NBT,
+  Position, NBT, Chat,
 } from '../datatypes.js'
 import { XYZPosition } from './datatypes/Position.js'
 import { NBTModel } from '../nbt/model.js'
+import { JSONChatComponent } from '@ionistor/jcc'
 
 /**
  * <h1> TypedBuffer </h1>
@@ -155,6 +156,7 @@ export class TypedBuffer {
   writePosition = (...value: XYZPosition[]): this => this.write(Position, ...value)
   writeUUID = (...value: Uint8Array[]): this => this.write(UUID, ...value)
   writeNBT = <T>(model: NBTModel<T>, value: T, name: string | null = null) => this.write(new NBT<T>(name, model), value)
+  writeChatComponent = (...value: JSONChatComponent[]): this => this.write(Chat, ...value)
 
   // Read methods
   readBoolean = (): boolean => this.read(Boolean)
@@ -173,6 +175,7 @@ export class TypedBuffer {
   readPosition = (): XYZPosition => this.read(Position)
   readUUID = (): Uint8Array => this.read(UUID)
   readNBT = <T>(name: string | null = null) => this.read(new NBT<T>(name))
+  readChatComponent = (): JSONChatComponent => this.read(Chat)
 
   // Array read methods
   readBooleanArray = (length: number): boolean[] => this.readArray(Boolean, length)
@@ -190,5 +193,6 @@ export class TypedBuffer {
   readStringArray = (length: number): string[] => this.readArray(String, length)
   readPositionArray = (length: number): XYZPosition[] => this.readArray(Position, length)
   readUUIDArray = (length: number): Uint8Array[] => this.readArray(UUID, length)
+  readChatComponentArray = (length: number): JSONChatComponent[] => this.readArray(Chat, length)
 }
 

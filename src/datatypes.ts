@@ -14,6 +14,7 @@ import { Varint } from './protocol/datatypes/Varint.js'
 import { Boolean } from './protocol/datatypes/Boolean.js'
 import { Position } from './protocol/datatypes/Position.js'
 import { NBT } from './protocol/datatypes/NBT.js'
+import { Chat } from './protocol/datatypes/Chat.js'
 
 export {
   Byte,
@@ -31,5 +32,6 @@ export {
   Varint,
   Boolean,
   Position,
-  NBT
+  NBT,
+  Chat,
 }
