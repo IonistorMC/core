@@ -10,7 +10,7 @@ import { Awaitable } from '../utils/awaitable.js'
 
 export type SendPacketFunction = (packet: ProtocolPacket) => void
 export type SetStateFunction = (state: PacketState) => void
-export type SetCompressionFunction = (compression: boolean) => void
+export type EnableCompressionFunction = (threshold: number) => void
 
 export interface IonistorClientEvents {
   connect: () => void
@@ -27,7 +27,7 @@ export interface IonistorClientOptions<T extends ProtocolPacket> {
   state: PacketState
   send: SendPacketFunction
   setState: SetStateFunction
-  setCompression: SetCompressionFunction
+  enableCompression: EnableCompressionFunction
   compression: boolean
   packet: T
 }
@@ -40,6 +40,7 @@ export class IonistorClient extends TypedEmitter<IonistorClientEvents> {
   readonly logger: Logger
   private state: PacketState = PacketState.Handshaking
   private compression = false
+  private compressionThreshold = 256
 
   constructor(logLevel?: LogLevel) {
     super()
@@ -113,15 +114,16 @@ export class IonistorClient extends TypedEmitter<IonistorClientEvents> {
       this.logger.error(`Failed to encode ${packetName} packet: ${e.message}`)
       return
     }
-    this.socket.write(await packet.data(this.compression), (err: any) => err && this.logger.warn(`Failed to send ${packetName} packet: ${err.message}`))
+    this.socket.write(await packet.data(this.compression, this.compressionThreshold), (err: any) => err && this.logger.warn(`Failed to send ${packetName} packet: ${err.message}`))
   }
 
   setState(state: PacketState) {
     this.state = state
   }
 
-  setCompression(compression: boolean) {
-    this.compression = compression
+  enableCompression(threshold = 256) {
+    this.compression = true
+    this.compressionThreshold = threshold
   }
 
   onPacket<T extends ProtocolPacket>(Packet: PacketConstructor<T>, listener: PacketListener<T>) {
@@ -146,7 +148,7 @@ export class IonistorClient extends TypedEmitter<IonistorClientEvents> {
             state: this.state,
             send: this.send.bind(this),
             setState: this.setState.bind(this),
-            setCompression: this.setCompression.bind(this),
+            enableCompression: this.enableCompression.bind(this),
             compression: this.compression,
             socket: this.socket,
             packet,
