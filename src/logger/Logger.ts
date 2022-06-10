@@ -5,6 +5,7 @@ import inject from 'flinject'
 import { StackFrame } from 'stack-trace'
 import { ProtocolPacket } from '../protocol/Packet.js'
 import { Framer } from '../protocol/Framer.js'
+import { TypedBuffer } from '../protocol/TypedBuffer.js'
 
 export class Logger {
   constructor(public level = LogLevel.Info) {
@@ -15,7 +16,26 @@ export class Logger {
   log(level: LogLevel, message: string) {
     if (level < this.level) return
     const date = new Date()
-    message.split('\n').forEach(line => console.log(`${chalk.gray(`[${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}::${date.getMilliseconds().toString().padStart(3, '0')}]`)} ${Logger.coloredLevel(level)} ${chalk.gray(figures.pointer)} ${Logger.levelMessage(level, line)}`))
+    message
+      .split('\n')
+      .forEach(line =>
+        console.log(
+          `${chalk.gray(
+            `[${date.getHours().toString().padStart(2, '0')}:${date
+              .getMinutes()
+              .toString()
+              .padStart(2, '0')}:${date
+              .getSeconds()
+              .toString()
+              .padStart(2, '0')}::${date
+              .getMilliseconds()
+              .toString()
+              .padStart(3, '0')}]`,
+          )} ${Logger.coloredLevel(level)} ${chalk.gray(
+            figures.pointer,
+          )} ${Logger.levelMessage(level, line)}`,
+        ),
+      )
   }
 
   info(message: string) {
@@ -36,9 +56,16 @@ export class Logger {
 
   trace(message: string, trace: StackFrame[]) {
     const at = trace[0]
-    const filename = at.getFileName().replace('file://', '').replace(process.cwd(), '').substring(1)
+    const filename = at
+      .getFileName()
+      .replace('file://', '')
+      .replace(process.cwd(), '')
+      .substring(1)
     const position = `${at.getLineNumber()}:${at.getColumnNumber()}`
-    this.log(LogLevel.Trace, `${message} ${chalk.gray(`${chalk.bold('at')} ${filename} ${position}`)}`)
+    this.log(
+      LogLevel.Trace,
+      `${message} ${chalk.gray(`${chalk.bold('at')} ${filename} ${position}`)}`,
+    )
   }
 
   private static coloredLevel(level: LogLevel): string {
@@ -76,23 +103,49 @@ export class Logger {
   }
 
   private setupTrace(logger: Logger) {
-    Buffer.alloc = inject(Buffer.alloc, ({ stacktrace }, size) => this.trace(`Buffer allocated with ${size} bytes`, stacktrace))
-    Buffer.concat = inject(Buffer.concat, ({ stacktrace }, buffers) => this.trace(`${buffers.length} Buffers concatenated`, stacktrace))
+    Buffer.alloc = inject(Buffer.alloc, ({ stacktrace }, size) =>
+      this.trace(`Buffer allocated with ${size} bytes`, stacktrace),
+    )
+    Buffer.concat = inject(Buffer.concat, ({ stacktrace }, buffers) =>
+      this.trace(`${buffers.length} Buffers concatenated`, stacktrace),
+    )
   }
 
   private setupDebug(logger: Logger) {
     inject(ProtocolPacket.prototype, 'data', ({ object, target }, ...args) => {
       const start = performance.now()
       const result = target(...args)
-      logger.debug(`Packet ${chalk.bold.underline(object.constructor.name)} encoded in ${performance.now() - start}ms`)
+      logger.debug(
+        `Packet ${chalk.bold.underline(object.constructor.name)} encoded in ${
+          performance.now() - start
+        }ms`,
+      )
       return result
     })
-    inject(Framer.prototype, 'push', ({ target, noreturn, stacktrace }, ...args) => {
-      if(stacktrace[0].getFunctionName() === 'Framer.push') return
+    inject(
+      Framer.prototype,
+      'push',
+      ({ target, noreturn, stacktrace }, ...args) => {
+        if (stacktrace[0].getFunctionName() === 'Framer.push') return
+        const start = performance.now()
+        target(...args)
+        logger.debug(`Packet chunk framed in ${performance.now() - start}ms`)
+        noreturn()
+      },
+    )
+
+    inject(TypedBuffer.prototype, 'writeNBT', ({ target }, ...args) => {
       const start = performance.now()
-      target(...args)
-      logger.debug(`Packet chunk framed in ${performance.now() - start}ms`)
-      noreturn()
+      const result = target(...args)
+      logger.debug(`NBT written in ${performance.now() - start}ms`)
+      return result
+    })
+
+    inject(TypedBuffer.prototype, 'readNBT', ({ target }, ...args) => {
+      const start = performance.now()
+      const result = target(...args)
+      logger.debug(`NBT read in ${performance.now() - start}ms`)
+      return result
     })
   }
 }

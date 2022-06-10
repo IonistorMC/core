@@ -189,7 +189,7 @@ function encodeTagValue(tag: Tag, buffer: Buffer, offset: number) {
     offset = buffer.writeUInt8(type, offset)
     offset = buffer.writeUInt32BE(tag.length, offset)
     for (const item of tag) {
-      if (getTagType(item) != type) throw new Error('Odd tag type in list');
+      if (getTagType(item) != type) throw new Error('Odd tag type in list')
       offset = encodeTagValue(item, buffer, offset)
     }
   } else if (typeof tag == 'string') {
