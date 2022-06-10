@@ -15,6 +15,7 @@ import { Boolean } from './protocol/datatypes/Boolean.js'
 import { Position } from './protocol/datatypes/Position.js'
 import { NBT } from './protocol/datatypes/NBT.js'
 import { Chat } from './protocol/datatypes/Chat.js'
+import { DataType } from './protocol/DataType.js'
 
 export {
   Byte,
@@ -34,4 +35,5 @@ export {
   Position,
   NBT,
   Chat,
+  DataType,
 }
