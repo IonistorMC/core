@@ -6,6 +6,7 @@ import { TypedEmitter } from 'tiny-typed-emitter'
 import { getPacketMetadata, PacketConstructor, ProtocolPacket } from '../protocol/Packet.js'
 import { prettybuf } from '../utils/prettybuf.js'
 import { LogLevel } from '../logger/LogLevel.js'
+import { Awaitable } from '../utils/awaitable.js'
 
 export type SendPacketFunction = (packet: ProtocolPacket) => void
 export type SetStateFunction = (state: PacketState) => void
@@ -31,7 +32,7 @@ export interface IonistorClientOptions<T extends ProtocolPacket> {
   packet: T
 }
 
-export type PacketListener<T extends ProtocolPacket> = (options: IonistorClientOptions<T>) => void
+export type PacketListener<T extends ProtocolPacket> = (options: IonistorClientOptions<T>) => Awaitable<void>
 
 export class IonistorClient extends TypedEmitter<IonistorClientEvents> {
   #socket?: Socket
@@ -124,7 +125,7 @@ export class IonistorClient extends TypedEmitter<IonistorClientEvents> {
   }
 
   onPacket<T extends ProtocolPacket>(Packet: PacketConstructor<T>, listener: PacketListener<T>) {
-    this.on('frame', frame => {
+    this.on('frame', async frame => {
       try {
         const { id, state } = getPacketMetadata(Packet)
         if (!id || !state) throw new Error('Packet metadata required')
@@ -139,7 +140,7 @@ export class IonistorClient extends TypedEmitter<IonistorClientEvents> {
             return
           }
           this.logger.debug(`Emitting ${Packet.name} packet`)
-          listener({
+          await listener({
             framer: this.#framer,
             logger: this.logger,
             state: this.state,
